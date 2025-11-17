@@ -1,84 +1,90 @@
-# Docker CLI Cheat Sheet  🐳
+# Docker CLI Cheat Sheet 🐳
 
-## Containers
-| Command                                  | Description                                      | Example / Note                          |
-|------------------------------------------|--------------------------------------------------|-----------------------------------------|
-| `docker run IMAGE`                       | Run a container from an image                    |                                         |
-| `docker run -d IMAGE`                    | Run in background (detached)                     |                                         |
-| `docker run -p HOST:CONTAINER IMAGE`     | Map ports (host → container)                     | `docker run -p 8080:80 nginx`           |
-| `docker run --name NAME IMAGE`           | Give the container a custom name                 |                                         |
-| `docker start CONTAINER`                 | Start a stopped container                        |                                         |
-| `docker stop CONTAINER`                  | Stop a running container                         |                                         |
-| `docker restart CONTAINER`               | Restart container                                |                                         |
-| `docker kill CONTAINER`                  | Force-stop container                             |                                         |
-| `docker pause CONTAINER`                 | Pause all processes                              |                                         |
-| `docker unpause CONTAINER`               | Resume paused container                          |                                         |
-| `docker logs CONTAINER`                  | Show container logs                              |                                         |
-| `docker logs -f CONTAINER`               | Follow logs in real-time                         |                                         |
-| `docker exec -it CONTAINER bash`         | Open interactive shell inside container          | Use `sh` if no bash                     |
-| `docker cp HOST_PATH CONTAINER:DEST`     | Copy file/dir from host → container              |                                         |
-| `docker cp CONTAINER:SRC HOST_DEST`      | Copy file/dir from container → host              |                                         |
-| `docker ps`                              | List running containers                          |                                         |
-| `docker ps -a`                           | List all containers (including stopped)          |                                         |
-| `docker rm CONTAINER`                    | Remove stopped container                         |                                         |
-| `docker rm -f CONTAINER`                 | Force remove running container                   |                                         |
-| `docker container prune`                 | Remove all stopped containers                    |                                         |
+## Containers 
 
-## Images
-| Command                                  | Description                                      | Example / Note                          |
-|------------------------------------------|--------------------------------------------------|-----------------------------------------|
-| `docker pull IMAGE`                      | Download image from registry                     |                                         |
-| `docker build -t NAME .`                 | Build image from Dockerfile in current dir       |                                         |
-| `docker build -f FILE -t NAME .`         | Build using custom Dockerfile                    |                                         |
-| `docker images`                          | List local images                                |                                         |
-| `docker rmi IMAGE`                       | Remove image                                     |                                         |
-| `docker rmi -f IMAGE`                    | Force remove image                               |                                         |
-| `docker image prune`                     | Remove dangling (unused) images                  |                                         |
-| `docker image prune -a`                  | Remove all unused images                         |                                         |
-| `docker save IMAGE -o file.tar`          | Export image to tar file                         |                                         |
-| `docker load -i file.tar`                | Import image from tar file                       |                                         |
+| Command                                    | Description (EN)                               | הסבר מפורט בעברית                                                                                                                                                          | Example / Note                              |
+|--------------------------------------------|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
+| `docker run IMAGE`                         | Run a container from an image                  | יוצר ומפעיל מכולה חדשה מתוך דימוי (image) שצוין. אם הדימוי לא קיים במחשב – יוריד אותו אוטומטית מ-Docker Hub או מ-registry אחר.                                               | `docker run nginx`                          |
+| `docker run -d IMAGE`                      | Run in background (detached)                   | מפעיל את המכולה במצב "detached" – כלומר ברקע, והטרמינל שלך משתחרר מיד לשימוש נוסף. ללא -d המכולה תרוץ ב-foreground ותתפוס את המסך.                                       | `docker run -d nginx`                       |
+| `docker run -p HOST:CONTAINER IMAGE`       | Map ports (host → container)                   | ממפה פורט של המארח (HOST) לפורט בתוך המכולה (CONTAINER). כך ניתן לגשת לשירות שרץ במכולה דרך כתובת המארח. הפורמט: פורט_מארח:פורט_מכולה                                          | `docker run -p 8080:80 nginx`               |
+| `docker run --name NAME IMAGE`             | Give the container a custom name               | נותן למכולה שם קבוע וקל לזכור במקום המזהה האקראי הארוך שדוקר יוצר אוטומטית. מאוד שימושי כשעובדים עם הרבה מכולות.                                                          | `docker run --name my-nginx nginx`          |
+| `docker start CONTAINER`                   | Start a stopped container                      | מפעיל מחדש מכולה שכבר קיימת ועצורה (לא יוצר מכולה חדשה).                                                                                                                | `docker start my-nginx`                     |
+| `docker stop CONTAINER`                    | Stop a running container                       | עוצר את המכולה בצורה מסודרת – שולח אות SIGTERM לתהליך הראשי ומחכה (ברירת מחדל 10 שניות) שהוא יסיים לבד.                                                                      | `docker stop my-nginx`                      |
+| `docker restart CONTAINER`                 | Restart container                              | מבצע stop ואחריו start באותה פקודה. ניתן להוסיף `--time 20` כדי לתת יותר זמן לעצירה מסודרת.                                                                                 | `docker restart my-nginx`                   |
+| `docker kill CONTAINER`                    | Force-stop container                           | שולח SIGKILL מיידי – עוצר את המכולה בכוח בלי לתת לתהליך לסיים עבודה. משמש כש-stop תקוע.                                                                                   | `docker kill my-nginx`                      |
+| `docker pause CONTAINER`                   | Pause all processes                            | משהה את כל התהליכים במכולה באמצעות cgroups freeze (דומה ל-Ctrl-Z אבל על כל התהליכים).                                                                                   |                                             |
+| `docker unpause CONTAINER`                 | Resume paused container                        | מחזיר לפעולה מכולה שהושהתה עם pause.                                                                                                                                     |                                             |
+| `docker logs CONTAINER`                    | Show container logs                            | מציג את כל הלוגים (stdout + stderr) של התהליך הראשי במכולה מאז שהתחילה.                                                                                               |                                             |
+| `docker logs -f CONTAINER`                 | Follow logs in real-time                       | עוקב אחרי הלוגים בזמן אמת בדיוק כמו `tail -f`. מאוד שימושי לדיבאג.                                                                                                     |                                             |
+| `docker exec -it CONTAINER bash`           | Open interactive shell inside container       | פותח shell אינטראקטיבי (עם טרמינל) בתוך מכולה שכבר רצה. `-i` = interactive, `-t` = tty. אם אין bash – השתמשו ב-`sh`.                                                      | `docker exec -it my-nginx bash`             |
+| `docker cp HOST_PATH CONTAINER:DEST`       | Copy file/dir from host → container            | מעתיק קובץ או תיקייה שלמה מהמחשב המארח אל תוך מערכת הקבצים של המכולה.                                                                                                 | `docker cp ./config.conf my-nginx:/etc/nginx/` |
+| `docker cp CONTAINER:SRC HOST_DEST`        | Copy file/dir from container → host            | מעתיק קובץ או תיקייה מהמכולה אל המארח.                                                                                                                                   | `docker cp my-nginx:/var/log/nginx.log .`   |
+| `docker ps`                                | List running containers                        | מציג רשימה של כל המכולות שרצות כרגע (כולל שם, ID, דימוי, פורטים, זמן ריצה וכו').                                                                                        |                                             |
+| `docker ps -a`                             | List all containers (including stopped)       | מציג את כל המכולות הקיימות במערכת – גם עצורות, גם כאלה שיצאו ב-exit.                                                                                                  |                                             |
+| `docker rm CONTAINER`                      | Remove stopped container                       | מוחק מכולה שעצורה לחלוטין. לא ניתן למחוק מכולה רצה בלי `-f`.                                                                                                          |                                             |
+| `docker rm -f CONTAINER`                   | Force remove running container                 | מוחק מכולה גם אם היא רצה (מבצע kill ואז rm).                                                                                                                            |                                             |
+| `docker container prune`                   | Remove all stopped containers                  | מנקה אוטומטית את כל המכולות שעצרו ולא בשימוש (ישאל לאישור).                                                                                                          |                                             |
 
-## Volumes
-| Command                                  | Description                                      |
-|------------------------------------------|--------------------------------------------------|
-| `docker volume create NAME`              | Create a named volume                            |
-| `docker volume ls`                       | List volumes                                     |
-| `docker volume inspect NAME`             | Show detailed info                               |
-| `docker volume rm NAME`                  | Remove volume                                    |
-| `docker volume prune`                    | Remove all unused volumes                        |
+## Images (דימויים)
 
-## Networks
-| Command                                  | Description                                      |
-|------------------------------------------|--------------------------------------------------|
-| `docker network ls`                      | List networks                                    |
-| `docker network create NAME`             | Create a custom network                          |
-| `docker network inspect NAME`            | Show network details                             |
-| `docker network rm NAME`                 | Remove network                                   |
-| `docker network prune`                   | Remove all unused networks                       |
+| Command                              | Description                                 | הסבר מפורט בעברית                                                                                                                                                 | Example / Note                          |
+|--------------------------------------|---------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
+| `docker pull IMAGE`                  | Download image from registry                | מוריד דימוי מ-Docker Hub או מ-registry פרטי אל המחשב המקומי.                                                                                                    | `docker pull nginx:latest`              |
+| `docker build -t NAME .`             | Build image from Dockerfile in current dir  | בונה דימוי חדש לפי הוראות בקובץ Dockerfile שנמצא בתיקייה הנוכחית, ומתייג אותו בשם שצוין.                                                                          | `docker build -t myapp:v1 .`            |
+| `docker build -f FILE -t NAME .`     | Build using custom Dockerfile               | מאפשר לבנות דימוי מקובץ Dockerfile בשם או במיקום אחר.                                                                                                          |                                         |
+| `docker images`                      | List local images                           | מציג רשימה של כל הדימויים שנמצאים במחשב המקומי.                                                                                                                |                                         |
+| `docker rmi IMAGE`                   | Remove image                                | מוחק דימוי (רק אם אין מכולה שמשתמשת בו, גם לא עצורה).                                                                                                           |                                         |
+| `docker rmi -f IMAGE`                | Force remove image                          | מוחק דימוי בכוח – גם אם יש מכולות (עצורות או רצות) שמשתמשות בו.                                                                                                |                                         |
+| `docker image prune`                 | Remove dangling (unused) images             | מנקה דימויים "תלויים" (שכבות ללא תגית וללא שימוש).                                                                                                            |                                         |
+| `docker image prune -a`              | Remove all unused images                    | מנקה את כל הדימויים שלא בשימוש על ידי אף מכולה (זהירות – עלול למחוק הרבה!).                                                                                   |                                         |
+| `docker save IMAGE -o file.tar`      | Export image to tar file                    | שומר דימוי שלם (כולל כל השכבות וההיסטוריה) לקובץ tar לשימוש offline או העברה.                                                                                  | `docker save nginx:latest -o nginx.tar` |
+| `docker load -i file.tar`            | Import image from tar file                  | טוען דימוי מקובץ tar שהוכן עם save.                                                                                                                               | `docker load -i nginx.tar`              |
 
-## System
-| Command                                  | Description                                      |
-|------------------------------------------|--------------------------------------------------|
-| `docker info`                            | System-wide information                          |
-| `docker version`                         | Show Docker version                              |
-| `docker stats`                           | Live resource usage of containers                |
-| `docker top CONTAINER`                   | Show running processes in container              |
-| `docker history IMAGE`                   | Show image layer history                         |
-| `docker system df`                       | Disk usage                                       |
-| `docker system prune`                    | Remove unused objects (networks, images, etc.)  |
-| `docker system prune -a`                 | Remove ALL unused objects (be careful!)          |
+## Volumes (כרכים – נפחי אחסון קבועים)
 
-## Docker Compose (Bonus)
-| Command                                  | Description                                      |
-|------------------------------------------|--------------------------------------------------|
-| `docker compose up`                      | Build (if needed) and start services             |
-| `docker compose up -d`                   | Start in background                              |
-| `docker compose down`                    | Stop and remove containers + networks            |
-| `docker compose logs`                    | Show logs                                        |
-| `docker compose logs -f`                 | Follow logs                                      |
-| `docker compose ps`                      | List running services                            |
-| `docker compose build`                   | Build or rebuild images                          |
-| `docker compose pull`                    | Pull latest images                               |
-| `docker compose restart`                 | Restart all services                             |
+| Command                        | Description                  | הסבר מפורט בעברית                                                                                          |
+|--------------------------------|------------------------------|-----------------------------------------------------------------------------------------------------------|
+| `docker volume create NAME`    | Create a named volume        | יוצר נפח אחסון קבוע (named volume) שנשמר מחוץ למכולה ונשאר גם אחרי מחיקת המכולה.                         |
+| `docker volume ls`             | List volumes                 | מציג את כל ה-volumes הקיימים במערכת.                                                                         |
+| `docker volume inspect NAME`   | Show detailed info           | מציג מידע מפורט על volume ספציפי (נתיב במארח, דרייבר וכו').                                                |
+| `docker volume rm NAME`        | Remove volume                | מוחק volume (רק אם אף מכולה לא משתמשת בו).                                                                   |
+| `docker volume prune`          | Remove all unused volumes    | מנקה אוטומטית את כל ה-volumes שלא מחוברים לאף מכולה.                                                        |
 
-Happy Dockering! 🚀
+## Networks (רשתות)
+
+| Command                       | Description               | הסבר מפורט בעברית                                                                              |
+|-------------------------------|---------------------------|-------------------------------------------------------------------------------------------------|
+| `docker network ls`           | List networks             | מציג את כל הרשתות שדוקר יצר (bridge, host, none, ורשתות מותאמות אישית).                           |
+| `docker network create NAME`  | Create a custom network   | יוצר רשת וירטואלית חדשה (ברירת מחדל: bridge) שמאפשרת תקשורת מבודדת בין מכולות.                  |
+| `docker network inspect NAME` | Show network details      | מציג פרטים מלאים על הרשת (מכולות מחוברות, סאבנט, gateway וכו').                                  |
+| `docker network rm NAME`      | Remove network            | מוחק רשת מותאמת אישית (לא ניתן למחוק את הרשתות המובנות כמו bridge).                               |
+| `docker network prune`        | Remove all unused networks| מנקה את כל הרשתות שאינן בשימוש.                                                                     |
+
+## System (מערכת)
+
+| Command                        | Description                                 | הסבר מפורט בעברית                                                                                     |
+|--------------------------------|---------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| `docker info`                  | System-wide information                     | מציג מידע כללי על התקנת Docker (גרסה, מספר מכולות, דרייבר אחסון, swarm וכו').                         |
+| `docker version`               | Show Docker version                         | מציג גרסאות של client ו-server (מאוד שימושי לבדוק אם יש בעיית תאימות).                              |
+| `docker stats`                 | Live resource usage of containers           | מציג בזמן אמת צריכת CPU, זיכרון, רשת ודיסק של כל המכולות הרצות.                                      |
+| `docker top CONTAINER`         | Show running processes in container         | מציג את רשימת התהליכים (ps) שרצים כרגע בתוך המכולה – בדיוק כמו `top` או `ps aux` במארח.            |
+| `docker history IMAGE`         | Show image layer history                    | מציג את כל השכבות שמרכיבות את הדימוי ואת הפקודות שבנו כל שכבה.                                       |
+| `docker system df`             | Disk usage                                  | מציג כמה מקום תופסים דימויים, מכולות, volumes ו-cache.                                               |
+| `docker system prune`          | Remove unused objects                       | מנקה הכל שלא בשימוש: מכולות עצורות, רשתות, דימויים תלויים ו-cache של build (לא מוחק דימויים בשימוש). |
+| `docker system prune -a`       | Remove ALL unused objects (be careful!)     | מנקה הכל שלא בשימוש + גם דימויים שלא משויכים לאף מכולה (זהירות – עלול למחוק הרבה!).                  |
+
+## Docker Compose (בונוס)
+
+| Command                        | Description                              | הסברבר מפורט בעברית                                                                                             |
+|--------------------------------|------------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| `docker compose up`            | Build (if needed) and start services     | מרים את כל השירותים המוגדרים בקובץ docker-compose.yml (בונה דימויים אם צריך).                               |
+| `docker compose up -d`         | Start in background                      | אותו דבר כמו up אבל מריץ ברקע (detached).                                                                       |
+| `docker compose down`          | Stop and remove containers + networks    | עוצר ומוחק את כל המכולות והרשתות שנוצרו על ידי compose (אבל משאיר volumes ודימויים).                         |
+| `docker compose logs`          | Show logs                                | מציג לוגים של כל השירותים.                                                                                    |
+| `docker compose logs -f`       | Follow logs                              | עוקב אחרי הלוגים בזמן אמת.                                                                                    |
+| `docker compose ps`            | List running services                    | מציג את הסטטוס של כל השירותים (דומה ל-docker ps אבל רק של הפרויקט).                                          |
+| `docker compose build`         | Build or rebuild images                  | בונה מחדש את הדימויים של השירותים (שימושי אחרי שינוי Dockerfile).                                            |
+| `docker compose pull`          | Pull latest images                       | מוריד את הגרסאות האחרונות של הדימויים החיצוניים שמוגדרים ב-compose.                                          |
+| `docker compose restart`       | Restart all services                     | מפעיל מחדש את כל השירותים של הפרויקט.                                                                        |
+
+**בהצלחה עם דוקר! 🚀**
