@@ -1,4 +1,4 @@
-# Docker CLI Cheat Sheet – Clean & Beautiful 🐳
+# Docker CLI Cheat Sheet  🐳
 
 ## Containers
 | Command                                  | Description                                      | Example / Note                          |
